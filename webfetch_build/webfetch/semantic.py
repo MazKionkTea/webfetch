@@ -44,8 +44,11 @@ class SemanticExtractor:
         tag_name = element.name.lower()
         level = int(tag_name[1]) if len(tag_name) == 2 and tag_name[1].isdigit() else 1
         text = element.get_text(strip=True)
+        block_id = element.get('id', '') or f"h{level}-{text[:20].replace(' ', '-').lower()}"
+
         
         return HeadingBlock(
+            id=block_id,
             type="heading", # Sesuai value enum BlockType
             confidence=ConfidenceLevel.HIGH,
             level=level,
@@ -63,7 +66,9 @@ class SemanticExtractor:
             ParagraphBlock: Objek block dengan teks konten.
         """
         text = element.get_text(strip=True)
+        block_id = element.get('id', '') or f"p-{text[:20].replace(' ', '-').lower()}"
         return ParagraphBlock(
+            id=block_id,
             type="paragraph",
             confidence=ConfidenceLevel.HIGH,
             text=text
@@ -132,7 +137,9 @@ class SemanticExtractor:
                 # List biasa tanpa nested
                 items.append(li.get_text(strip=True))
                 
+        block_id = element.get('id', '') or f"list-{'ol' if is_ordered else 'ul'}-{len(items)}"
         return ListBlock(
+            id=block_id,
             type="list",
             confidence=ConfidenceLevel.MEDIUM, # Sedikit lebih rendah karena struktur bisa ambigu
             items=items,
@@ -167,6 +174,7 @@ class SemanticExtractor:
                 break
                 
         return CodeBlock(
+            id=element.get('id', '') or f"code-{language or 'plain'}",
             type="code",
             confidence=ConfidenceLevel.HIGH,
             code=code_text,
@@ -184,7 +192,9 @@ class SemanticExtractor:
             BlockquoteBlock: Objek block dengan teks kutipan.
         """
         text = element.get_text(strip=True)
+        block_id = element.get('id', '') or f"quote-{text[:20].replace(' ', '-').lower()}"
         return BlockquoteBlock(
+            id=block_id,
             type="blockquote",
             confidence=ConfidenceLevel.HIGH,
             text=text
@@ -229,7 +239,9 @@ class SemanticExtractor:
             if rows[0] == headers:
                 rows.pop(0)
 
+        block_id = element.get('id', '') or f"table-{len(headers)}x{len(rows)}"
         return TableBlock(
+            id=block_id,
             type="table",
             confidence=ConfidenceLevel.MEDIUM,
             headers=headers,
@@ -250,6 +262,7 @@ class SemanticExtractor:
                 caption = figcap.get_text(strip=True)
                 
         return ImageBlock(
+            id=element.get('id', '') or f"img-{src.split('/')[-1].split('.')[0]}",
             type="image",
             confidence=ConfidenceLevel.HIGH,
             src=src,
@@ -271,6 +284,7 @@ class SemanticExtractor:
             embed_type = "vimeo"
             
         return EmbedBlock(
+            id=element.get('id', '') or f"embed-{embed_type}",
             type="embed",
             confidence=ConfidenceLevel.MEDIUM,
             url=url,
