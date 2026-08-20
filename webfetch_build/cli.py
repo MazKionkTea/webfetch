@@ -18,29 +18,29 @@ from pathlib import Path
 from typing import List, Optional
 
 # Import komponen pipeline
-from .robots import RobotsChecker, RateLimiter
-from .browser import BrowserEngine
-from .consent import CookieConsentHandler
-from .cache import FetchCache
-from .fetcher import Fetcher
-from .content_type import detect_content_type, ContentDispatcher
-from .metadata import MetadataExtractor
-from .cleaner import DOMCleaner
-from .boilerplate import BoilerplateLearner
-from .scoring import ContentScorer
-from .content import MainContentDetector
-from .pagination import PaginationHandler
-from .semantic import SemanticExtractor
-from .links import LinkExtractor
-from .images import ImageExtractor
-from .tables import TableExtractor
-from .embeds import EmbedExtractor
-from .screenshot_fallback import ScreenshotFallback
-from .model import Document, Metadata
-from .renderers.markdown import MarkdownRenderer
-from .renderers.json import JSONRenderer
-from .renderers.txt import TXTRenderer
-from .errors import FetchError, RobotsDisallowedError, UnsupportedContentTypeError
+from webfetch.robots import RobotsChecker, RateLimiter
+from webfetch.browser import BrowserEngine
+from webfetch.consent import CookieConsentHandler
+from webfetch.cache import FetchCache
+from webfetch.fetcher import Fetcher
+from webfetch.content_type import detect_content_type, ContentDispatcher
+from webfetch.metadata import MetadataExtractor
+from webfetch.cleaner import DOMCleaner
+from webfetch.boilerplate import BoilerplateLearner
+from webfetch.scoring import ContentScorer
+from webfetch.content import MainContentDetector
+from webfetch.pagination import PaginationHandler
+from webfetch.semantic import SemanticExtractor
+from webfetch.links import LinkExtractor
+from webfetch.images import ImageExtractor
+from webfetch.tables import TableExtractor
+from webfetch.embeds import EmbedExtractor
+from webfetch.screenshot_fallback import ScreenshotFallback
+from webfetch.model import Document, Metadata
+from webfetch.renderers.markdown import MarkdownRenderer
+from webfetch.renderers.json import JSONRenderer
+from webfetch.renderers.txt import TXTRenderer
+from webfetch.errors import FetchError, RobotsDisallowedError, UnsupportedContentTypeError
 
 
 async def fetch_single_url(url: str, args) -> Optional[Document]:
