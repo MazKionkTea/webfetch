@@ -183,6 +183,7 @@ async def fetch(url: str, output: str = "markdown", javascript: bool = True,
                 if not exists:
                     from .model import ImageBlock, ConfidenceLevel
                     blocks.append(ImageBlock(
+                        id=f"img-{img_data.get('src', '').split('/')[-1].split('.')[0] or 'unknown'}",
                         type="image",
                         confidence=ConfidenceLevel.MEDIUM,
                         src=img_data['src'],
