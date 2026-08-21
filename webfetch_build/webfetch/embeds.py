@@ -111,7 +111,10 @@ class EmbedExtractor:
             else:
                 title = "Embedded Content"
                 
+        # Generate ID yang unik untuk embed
+        embed_id = iframe_element.get('id', '') or f"embed-{embed_type}-{title[:20].replace(' ', '-').lower() if title else 'unknown'}"
         return EmbedBlock(
+            id=embed_id,
             type="embed",
             confidence=ConfidenceLevel.HIGH, # Iframe biasanya eksplisit
             url=src,
@@ -143,7 +146,9 @@ class EmbedExtractor:
             src = emb.get('src', '')
             if src:
                 # Tag <embed> biasanya generic atau plugin lama
+                embed_id = emb.get('id', '') or f"embed-generic-{src.split('/')[-1][:20]}"
                 block = EmbedBlock(
+                    id=embed_id,
                     type="embed",
                     confidence=ConfidenceLevel.MEDIUM,
                     url=src,
