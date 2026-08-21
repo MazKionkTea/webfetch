@@ -261,8 +261,19 @@ class SemanticExtractor:
             if figcap:
                 caption = figcap.get_text(strip=True)
                 
+        # Generate ID yang robust untuk berbagai format src
+        img_id = element.get('id', '')
+        if not img_id:
+            # Ekstrak nama file dari URL/src
+            filename = src.split('/')[-1] if '/' in src else src
+            # Ambil bagian sebelum ekstensi (jika ada)
+            name_part = filename.split('.')[0] if '.' in filename else filename
+            # Truncate dan sanitize untuk ID yang valid
+            name_part = name_part[:30].replace(' ', '-').replace(':', '-')
+            img_id = f"img-{name_part or 'unknown'}"
+
         return ImageBlock(
-            id=element.get('id', '') or f"img-{src.split('/')[-1].split('.')[0]}",
+            id=img_id,
             type="image",
             confidence=ConfidenceLevel.HIGH,
             src=src,
