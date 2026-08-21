@@ -139,13 +139,18 @@ async def fetch_single_url(url: str, args) -> Optional[Document]:
         if args.extract_images:
             img_extractor = ImageExtractor()
             images = img_extractor.extract_images(main_element, base_url=final_url)
-            from .model import ImageBlock, ConfidenceLevel
+            from webfetch.model import ImageBlock, ConfidenceLevel
             for img_data in images:
                 # Cek duplikasi sederhana
                 if not any(hasattr(b, 'src') and b.src == img_data['src'] for b in blocks):
                     blocks.append(ImageBlock(
-                        type="image", confidence=ConfidenceLevel.MEDIUM,
-                        src=img_data['src'], alt=img_data['alt'], caption=img_data['caption']
+                        id=f"img-{img_data.get('src', '').split('/')[-1].split('.')[0] or 'unknown'}",
+                        type="image",
+                        confidence=ConfidenceLevel.MEDIUM,
+                        src=img_data['src'],
+                        alt=img_data['alt'],
+                        caption=img_data['caption']
+
                     ))
                     
         # Embeds
