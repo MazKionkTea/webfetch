@@ -28,7 +28,7 @@ class DOMCleaner:
     # Daftar tag HTML yang pasti bukan konten teks utama
     NON_CONTENT_TAGS: List[str] = [
         'script', 'style', 'noscript', 'iframe', 'svg', 'canvas', 
-        'object', 'embed', 'applet', 'meta', 'link', 'head'
+        'object', 'embed', 'applet', 'meta', 'link', 'head', 'nav'
     ]
 
     # Pola atribut/class/id yang mengindikasikan elemen tracking/iklan

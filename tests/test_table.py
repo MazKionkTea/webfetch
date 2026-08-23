@@ -131,31 +131,17 @@ def test_table_normalization_handles_uneven_columns():
     headers = result['headers']
     rows = result['rows']
     
-    # Header punya 2 kolom
-    assert len(headers) == 2
-    
-    # Baris 1: Hanya 1 sel ("Data 1"), harus di-padding jadi 2
-    assert len(rows[0]) == 2, "Baris pendek harus di-padding"
-    assert rows[0] == ["Data 1", ""], f"Padding gagal: {rows[0]}"
-    
-    # Baris 2: Punya 3 sel, harus di-truncate jadi 2 (ikuti header max)
-    # Atau jika logic kita mengambil max(all), maka header akan di-padding.
-    # Implementasi kita: max_cols ditentukan oleh header ATAU row terpanjang.
-    # Di SAMPLE_UNEVEN, row terakhir punya 3 kolom. Maka max_cols = 3.
-    # Header akan jadi ["Kolom A", "Kolom B", ""]
-    
-    max_cols = len(headers) # Seharusnya 3 karena normalisasi melihat row terpanjang juga
-    
-    # Cek ulang logika normalisasi di file tables.py:
-    # max_cols = max(len(headers), max(len(r) for r in rows))
-    # Jadi max_cols harusnya 3.
-    
-    assert max_cols == 3, "Kolom maksimal harus menyesuaikan data terlebar"
+    # Header punya 2 kolom awal, tapi normalisasi menyesuaikan dengan row terpanjang (3 kolom)
+    # Maka header akan di-padding jadi 3: ["Kolom A", "Kolom B", ""]
     assert len(headers) == 3, "Header harus di-padding mengikuti kolom terbanyak"
     
-    # Baris pertama (Data 1) harus punya 3 kolom (2 asli + 1 padding)
-    assert len(rows[0]) == 3
-    assert rows[0][2] == "", "Sel kosong harus diisi string kosong"
+    # Baris 1: Hanya 1 sel ("Data 1"), harus di-padding jadi 3
+    assert len(rows[0]) == 3, "Baris pendek harus di-padding"
+    assert rows[0] == ["Data 1", "", ""], f"Padding gagal: {rows[0]}"
+
+    # Baris 2: Punya 3 sel, tetap 3 karena max_cols = 3
+    assert len(rows[1]) == 3
+    assert rows[1] == ["Data 2", "Data 2B", "Data 2C (Extra)"], f"Baris kedua salah: {rows[1]}"
 
 
 def test_render_table_to_markdown():
@@ -163,6 +149,7 @@ def test_render_table_to_markdown():
     
     # Buat TableBlock manual untuk isolasi test renderer
     block = TableBlock(
+        id="test-table",
         type="table",
         confidence="HIGH",
         headers=["Item", "Qty"],

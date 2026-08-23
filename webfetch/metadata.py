@@ -355,11 +355,10 @@ class MetadataExtractor:
                     return d[k]
             return None
 
-        # 1. Title: JSON-LD (headline) > OG > Title Tag
+        # 1. Title: JSON-LD (headline) > OG > Meta description > Title Tag
         title = get_first(
             (json_ld, 'title'),
             (og, 'title'),
-            (meta, 'title'), # Jarang ada
             (title_data, 'title')
         )
 
@@ -375,13 +374,20 @@ class MetadataExtractor:
             (meta, 'published')
         )
 
-        # 4. Language: Meta > JSON-LD (jarang ada di JSON-LD article)
+        # 4. Description: JSON-LD > OG > Meta
+        description = get_first(
+            (json_ld, 'description'),
+            (og, 'description'),
+            (meta, 'description')
+        )
+
+        # 5. Language: Meta > JSON-LD (jarang ada di JSON-LD article)
         language = get_first(
             (meta, 'language'),
             (json_ld, 'language')
         )
 
-        # 5. Canonical URL: Explicit Canonical Tag > OG URL > Input URL
+        # 6. Canonical URL: Explicit Canonical Tag > OG URL > Input URL
         # Kita asumsikan caller sudah menyuntikkan hasil extract_canonical_url ke salah satu dict
         # atau kita cek manual di sini jika perlu. Untuk simplifikasi, kita ambil dari OG atau argumen url.
         canonical_url = get_first(
@@ -403,6 +409,7 @@ class MetadataExtractor:
             title=title,
             author=author,
             published=published,
+            description=description,
             language=language,
             canonical_url=canonical_url,
             source=source_indicator

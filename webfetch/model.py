@@ -196,6 +196,7 @@ class Metadata:
         title: Judul halaman (dari <title> atau og:title).
         author: Nama penulis konten (dari meta author atau JSON-LD).
         published: Tanggal publikasi dalam format ISO 8601 (jika tersedia).
+        description: Deskripsi halaman (dari meta description atau og:description).
         language: Kode bahasa dokumen (misal: 'en', 'id') dari atribut lang atau meta tag.
         canonical_url: URL kanonik untuk menghindari duplikasi konten (dari rel=canonical).
         source: Indikator sumber utama metadata ini diekstraksi untuk keperluan debugging/audit.
@@ -205,6 +206,7 @@ class Metadata:
     title: Optional[str] = None
     author: Optional[str] = None
     published: Optional[str] = None
+    description: Optional[str] = None
     language: Optional[str] = None
     canonical_url: Optional[str] = None
     source: Optional[str] = None
