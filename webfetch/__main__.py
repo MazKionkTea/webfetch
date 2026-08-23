@@ -3,12 +3,12 @@
 CLI entry point untuk webfetch.
 
 Penggunaan:
-    python -m webfetch <url> [options]
+    python webfetch.py <url> [options]
 
 Contoh:
-    python -m webfetch https://example.com
-    python -m webfetch https://example.com --output json
-    python -m webfetch https://example.com --output all --no-js
+    python webfetch.py https://example.com
+    python webfetch.py https://example.com --output json
+    python webfetch.py https://example.com --output all --no-js
 """
 
 import sys
@@ -16,8 +16,14 @@ import asyncio
 import argparse
 from typing import Optional
 
-from . import fetch, FetchResult
+try:
+    from .fetcher import fetch, FetchResult
+    from .metadata_extractor import MetadataExtractor
 
+    __all__ = ['fetch', 'FetchResult', 'MetadataExtractor']
+except ImportError:
+    # Fallback jika struktur file berbeda, biarkan kosong dulu agar modul bisa dimuat
+    __all__ = []
 
 def create_parser() -> argparse.ArgumentParser:
     """Buat parser argumen CLI."""
@@ -27,10 +33,10 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Contoh penggunaan:
-  python -m webfetch https://example.com
-  python -m webfetch https://example.com --output json
-  python -m webfetch https://example.com --output all --no-js
-  python -m webfetch "https://example.com/page?param=value" --timeout 60
+  python webfetch.py https://example.com
+  python webfetch.py https://example.com --output json
+  python webfetch.py https://example.com --output all --no-js
+  python webfetch.py "https://example.com/page?param=value" --timeout 60
         """
     )
 

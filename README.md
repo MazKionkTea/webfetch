@@ -220,7 +220,7 @@ webfetch/
 │   ├── test_table.py        # ekstraksi tabel
 │   └── test_metadata.py     # prioritas sumber metadata
 │
-└── cli.py                   # entry point CLI + orchestrator
+└── webfetch.py                   # entry point CLI + orchestrator
 ```
 
 ---
@@ -295,7 +295,7 @@ dependensinya selesai:
 16. **`links.py`, `images.py`, `tables.py`, `embeds.py`** — independen satu sama lain, bisa dikerjakan paralel setelah `semantic.py` punya struktur dasar.
 17. **`screenshot_fallback.py`** — fallback, baru relevan setelah alur normal (tahap 1–16) berjalan.
 18. **`renderers/base.py` → `markdown.py` → `json.py` → `txt.py`** — butuh `Document` yang stabil; `markdown.py` diprioritaskan karena target utama.
-19. **`cli.py`** — orchestrator, butuh semua modul di atas sudah punya kontrak fungsi jelas.
+19. **`webfetch.py`** — orchestrator, butuh semua modul di atas sudah punya kontrak fungsi jelas.
 20. **`tests/*.py`** — dikerjakan berdampingan begitu modul terkait mulai diisi, bukan di akhir sekali.
 
 > Catatan: seperti pdf2markdown, tiap file skeleton yang sudah dibuat
@@ -348,17 +348,17 @@ print(result.metadata)
 
 ```bash
 # tampilkan ke stdout
-webfetch https://example.com
+python webfetch.py https://example.com
 
 # simpan ke file
-webfetch https://example.com -o article.md
+python webfetch.py https://example.com -o article.md
 
 # format lain
-webfetch https://example.com --format json
-webfetch https://example.com --format txt
+python webfetch.py https://example.com --format json
+python webfetch.py https://example.com --format txt
 
 # batch dari daftar URL
-webfetch urls.txt -o ./output/
+python webfetch.py urls.txt -o ./output/
 ```
 
 ---

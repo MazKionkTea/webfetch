@@ -1,13 +1,13 @@
 """
-cli.py
+webfetch.py
 Entry point command-line + orchestrator utama pipeline webfetch.
 Menjahit semua modul jadi satu alur fetch().
 
 Contoh pemakaian:
-    webfetch https://example.com
-    webfetch https://example.com -o article.md
-    webfetch https://example.com --format json
-    webfetch urls.txt -o ./output/
+    python webfetch.py https://example.com
+    python webfetch.py https://example.com -o article.md
+    python webfetch.py https://example.com --format json
+    python webfetch.py urls.txt -o ./output/
 """
 
 import argparse
