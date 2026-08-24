@@ -1,0 +1,8 @@
+# Dependencies utama
+playwright>=1.40.0
+beautifulsoup4>=4.12.0
+lxml>=5.0.0
+
+# Dependencies opsional untuk fitur tambahan
+# requests>=2.31.0  # Untuk fallback HTTP sederhana
+# pdf2markdown      # Untuk konversi PDF (jika diimplementasikan)

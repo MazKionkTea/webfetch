@@ -3,27 +3,33 @@
 CLI entry point untuk webfetch.
 
 Penggunaan:
-    python webfetch.py <url> [options]
+    python -m webfetch <url> [options]
 
 Contoh:
-    python webfetch.py https://example.com
-    python webfetch.py https://example.com --output json
-    python webfetch.py https://example.com --output all --no-js
+    python -m webfetch https://example.com
+    python -m webfetch https://example.com --output json
+    python -m webfetch https://example.com --output all --no-js
 """
 
 import sys
 import asyncio
 import argparse
 from typing import Optional
+from pathlib import Path
+import importlib.util
 
-try:
-    from .fetcher import fetch, FetchResult
-    from .metadata_extractor import MetadataExtractor
+# Tambahkan parent directory ke path agar bisa import dari webfetch.py
+_parent_dir = Path(__file__).parent.parent
+if str(_parent_dir) not in sys.path:
+    sys.path.insert(0, str(_parent_dir))
 
-    __all__ = ['fetch', 'FetchResult', 'MetadataExtractor']
-except ImportError:
-    # Fallback jika struktur file berbeda, biarkan kosong dulu agar modul bisa dimuat
-    __all__ = []
+# Import fungsi fetch dari webfetch.py (di parent directory) secara eksplisit
+_webfetch_main_path = _parent_dir / "webfetch.py"
+_spec = importlib.util.spec_from_file_location("webfetch_main", _webfetch_main_path)
+_webfetch_main = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(_webfetch_main)
+fetch = _webfetch_main.fetch
+
 
 def create_parser() -> argparse.ArgumentParser:
     """Buat parser argumen CLI."""
@@ -33,10 +39,10 @@ def create_parser() -> argparse.ArgumentParser:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Contoh penggunaan:
-  python webfetch.py https://example.com
-  python webfetch.py https://example.com --output json
-  python webfetch.py https://example.com --output all --no-js
-  python webfetch.py "https://example.com/page?param=value" --timeout 60
+  python -m webfetch https://example.com
+  python -m webfetch https://example.com --output json
+  python -m webfetch https://example.com --output all --no-js
+  python -m webfetch "https://example.com/page?param=value" --timeout 60
         """
     )
 
@@ -96,31 +102,22 @@ Contoh penggunaan:
 
 async def main_async(args: argparse.Namespace) -> int:
     """Jalankan fetch secara async."""
-    result: FetchResult = await fetch(
+    # Tentukan format output
+    output_format = args.output if args.output != "all" else "markdown"
+
+    result = await fetch(
         url=args.url,
-        output=args.output,
+        output=None,  # None = print ke stdout
+        format=output_format,
         javascript=not args.no_js,
         extract_images=not args.no_images,
         extract_links=not args.no_links,
-        extract_metadata=not args.no_metadata,
-        timeout=args.timeout
+        extract_metadata=not args.no_metadata
     )
 
-    if result.error:
-        print(f"Error: {result.error}", file=sys.stderr)
+    if not result:
+        print("Error: Gagal mengambil konten dari URL.", file=sys.stderr)
         return 1
-
-    # Output sesuai format yang diminta
-    if args.output == "markdown":
-        print(result.markdown or "")
-    elif args.output == "json":
-        print(result.json_str or "")
-    elif args.output == "txt":
-        print(result.text_str or "")
-    elif args.output == "all":
-        # Untuk 'all', output markdown sebagai default,
-        # user bisa redirect ke file berbeda jika butuh format lain
-        print(result.markdown or "")
 
     return 0
 
